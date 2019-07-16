@@ -15,13 +15,13 @@ $( document ).ready(function() {
 		} 
 	});
 	
-
 	$('.form button').click(function(){
 		
 		$("#preview").addClass("loader");
 		$("#preview").removeClass("error");
 		var action = $(this).attr('name');
 		var data = $('.form').serialize() + "&action=" + action;
+		$(".form button").prop("disabled",true);
 		
 		$.ajax({url: "index.php?ajax", data: data, method: "POST", dataType: "json"})
 		
@@ -46,6 +46,7 @@ $( document ).ready(function() {
 		})
 		.always(function( data ) {
 			$("#preview").removeClass("loader");
+			$(".form button").prop("disabled",false);
 		});
 		
 	});

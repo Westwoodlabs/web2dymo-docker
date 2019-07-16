@@ -36,6 +36,7 @@ if(isset($_GET['download'])) {
 	$form_text2 = trim($_POST['text2']);
 	$form_copies = intval($_POST['copies']);
 	$form_template = trim($_POST['template']);
+	$form_logo = ($_POST['logo'] == "yes" ? true : false);
 	
 	if($form_text == "") {
 		$errormsg = "Text fehlt!";
@@ -62,7 +63,9 @@ if(isset($_GET['download'])) {
 					$pdf->SetFont('Arial','B',16);
 					$pdf->Text(2, 10, 'Dauerleihgabe');
 					$pdf->Text(2, 20, iconv('UTF-8', 'windows-1252', $form_text));
-					$pdf->Image("assets/wwlabs-150x150.png", 42, 2, 10, 10);
+					if($form_logo) {
+						$pdf->Image("assets/wwlabs-150x150.png", 42, 2, 10, 10);
+					}
 				}
 			break;
 			case "tmp2":
@@ -72,7 +75,9 @@ if(isset($_GET['download'])) {
 					$pdf->SetFont('Arial','B',16);
 					$pdf->Text(2, 10, iconv('UTF-8', 'windows-1252', $form_text));
 					$pdf->Text(2, 20, iconv('UTF-8', 'windows-1252', $form_text2));
-					//$pdf->Image("assets/wwlabs-150x150.png", 42, 2, 10, 10);
+					if($form_logo) {
+						$pdf->Image("assets/wwlabs-150x150.png", 42, 2, 10, 10);
+					}
 				}
 			break;
 		}
@@ -128,84 +133,77 @@ if(isset($_GET['download'])) {
 	echo '<!DOCTYPE html>
 	<html lang="de">
 	<head>
-	<meta charset="utf-8"/>
-	<title>Web2Dymo</title>
-	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+		<meta charset="utf-8"/>
+		<title>Web2Dymo</title>
+		<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 	<link href="assets/style.css" rel="stylesheet">
 	</head>
 	<body>
-	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <a class="navbar-brand" href="#">Web2Dymo</a>
-  
-</nav>
-
+		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+			<a class="navbar-brand" href="#">Web2Dymo</a>
+		</nav>
 	<div id="main">
-	<div class="container">
-  <div class="row">
-    <div class="col-sm">
-	
-	<div class="card">
-  <h5 class="card-header">Input</h5>
-  <div class="card-body">
-    
-	<form class="form">
-	<div class="form-group">
-		<label for="template">Template</label>
-		<select class="form-control" name="template">
-			<option value="tmp1">Dauerleihgabe</option>
-			<option value="tmp2">Freitext (zwei Zeilen)</option>
-		</select>
+		<div class="container">
+			<div class="row">
+				<div class="col-sm">
+					<div class="card">
+						<h5 class="card-header">Input</h5>
+						<div class="card-body">
+							<form class="form">
+								<div class="form-group">
+									<label for="template">Template</label>
+									<select class="form-control" name="template">
+										<option value="tmp1">Dauerleihgabe</option>
+										<option value="tmp2">Freitext (zwei Zeilen)</option>
+									</select>
+								</div>
+								<div class="form-group" id="text1">
+									<label for="name">Text</label>
+									<input type="text" class="form-control" name="text" placeholder="Texteingabe">
+								</div>
+								<div class="form-group hidden" id="text2">
+									<label for="name">Text 2</label>
+									<input type="text" class="form-control" name="text2" placeholder="Texteingabe">
+								</div>
+								<div class="form-group">
+									<label for="copies">Copies</label>
+									<select class="form-control" name="copies">';
+										for($i=1;$i<=$config['max_copies'];$i++) {
+											echo '<option value="'.$i.'">'.$i.'</option>';
+										}
+									echo '</select>
+								</div>
+								<div class="form-group">
+									<label for="logo">Logo</label>
+									<select class="form-control" name="logo">
+										<option value="yes">Yes</option>
+										<option value="no">No</option>
+									</select>
+								</div>
+								<div class="form-group">
+									<button type="button" class="btn btn-primary" name="print">Print</print> 
+									<button type="button" class="btn btn-primary" name="preview">Preview</print>
+									<button type="button" class="btn btn-primary" name="download">Download</print>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm">
+					<div class="card">
+						<h5 class="card-header">Preview</h5>
+						<div class="card-body">
+							<div id="preview"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
-	<div class="form-group" id="text1">
-		<label for="name">Text</label>
-		<input type="text" class="form-control" name="text" placeholder="Texteingabe">
-	</div>
-	<div class="form-group hidden" id="text2">
-		<label for="name">Text 2</label>
-		<input type="text" class="form-control" name="text2" placeholder="Texteingabe">
-	</div>
-	<div class="form-group">
-		<label for="copies">Copies</label>
-		<select class="form-control" name="copies">';
-
-	for($i=1;$i<=$config['max_copies'];$i++) {
-		echo '<option value="'.$i.'">'.$i.'</option>';
-	}
-	echo '</select>
-	</div>
-	<div class="form-group">
-		<button type="button" class="btn btn-primary" name="print">Print</print> 
-		<button type="button" class="btn btn-primary" name="preview">Preview</print>
-		<button type="button" class="btn btn-primary" name="download">Download</print>
-	</div>
-	</form>
-	
-  </div>
-</div>
-	
-	
-	</div>
-    <div class="col-sm">
-		<div class="card">
-	  <h5 class="card-header">Preview</h5>
-	  <div class="card-body">
-      <div id="preview"></div>
-	  </div>
-	  </div>
-    </div>
-  </div>
-</div>
-</div>
-
-	';
-
-		
-
-		
-
-	echo '<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 	<script src="assets/script.js"></script>
-	</body></html>';
+	</body>
+</html>';
 
 }
 	
