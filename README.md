@@ -1,2 +1,2 @@
 # Web2Dymo
-Tool to print with Labelprinter va Web Interface
+Tool to print with Labelprinter via Web Interface
