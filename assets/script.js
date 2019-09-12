@@ -4,13 +4,29 @@ $( document ).ready(function() {
 	$('.form [name="template"]').change(function() {
 		
 		switch($(this).val()) {
-		  case "tmp1":
+			case "tmp1":
 				$('.form #text1').show();
 				$('.form #text2').hide();
+				$('.form #text3').hide();
+				$('.form #text4').hide();
 			break;
-		  case "tmp2":
+			case "tmp2":
 				$('.form #text1').show();
 				$('.form #text2').show();
+				$('.form #text3').hide();
+				$('.form #text4').hide();
+			break;
+			case "tmp3":
+				$('.form #text1').show();
+				$('.form #text2').hide();
+				$('.form #text3').hide();
+				$('.form #text4').hide();
+			break;
+			case "tmp4":
+				$('.form #text1').show();
+				$('.form #text2').show();
+				$('.form #text3').show();
+				$('.form #text4').show();
 			break;
 		} 
 	});
