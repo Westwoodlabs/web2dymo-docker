@@ -1,13 +1,32 @@
 <?php
 
 $config['max_copies'] = 10;
+$config['tmpdir'] = dirname(__FILE__)."/tmp/";
+$config['tmpdelete'] = 60 * 60 * 24 * 2; // 2 days
+
+
+// Check writable
+if (!is_writable($config['tmpdir'])) {
+    die($config['tmpdir']." must me writeable!");
+}
+
+// Clean tempfiles
+$tmpfiles = scandir($config['tmpdir']);
+foreach($tmpfiles as $tmpfile) {
+	$file = $config['tmpdir'].$tmpfile;
+	if(is_file($file)) {
+		if(time() - filemtime($file) >= $config['tmpdelete']) { // 2 days
+			unlink($file);
+		}
+    } 
+}
 
 if(isset($_GET['download'])) {
 	
 	$filename = trim($_GET['download']);
 	$filename = str_replace("/", "", $filename);
 	
-	$download = sys_get_temp_dir()."/".$filename;
+	$download = $config['tmpdir']."/".$filename;
 	
 	// Process download
     if(file_exists($download)) {
@@ -48,12 +67,14 @@ if(isset($_GET['download'])) {
 		$errormsg = "Zu viele oder wenig Exemplare. Maximal 10!";
 	} elseif($form_template == "") {
 		$errormsg = "Template fehlt!";
+	} else {
+		$errormsg = "";
 	}
 	
 	if($errormsg == "") {
 
 	
-		$temp_file = tempnam(sys_get_temp_dir(), 'web2dymo').".pdf";
+		$temp_file = $config['tmpdir'].tempfile('web2dymo', 'pdf', $config['tmpdir']);
 		
 		require('libs/fpdf/fpdf.php');
 
@@ -122,6 +143,7 @@ if(isset($_GET['download'])) {
 				
 				// create Imagick object
 				$imagick = new Imagick();
+				$imagick->setRegistry('temporary-path', $config['tmpdir']);
 				
 				// Reads image from PDF
 				$imagick->readImage($temp_file);
@@ -243,6 +265,14 @@ if(isset($_GET['download'])) {
 	</body>
 </html>';
 
+}
+
+function tempfile($prefix, $sufix, $dir) {
+	while (true) {
+		$filename = uniqid($prefix, true).".".$sufix;
+		if (!file_exists($dir.$filename)) break;
+	}
+	return $filename;
 }
 	
 
