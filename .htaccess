@@ -1,0 +1,3 @@
+RewriteEngine On
+RewriteRule "^(.*/)?\.git/" - [F,L]
+RewriteRule "^(.*/)?libs/" - [F,L]
