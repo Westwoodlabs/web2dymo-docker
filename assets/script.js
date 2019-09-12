@@ -9,24 +9,47 @@ $( document ).ready(function() {
 				$('.form #text2').hide();
 				$('.form #text3').hide();
 				$('.form #text4').hide();
+				$('.form #barcode1').hide();
 			break;
 			case "tmp2":
 				$('.form #text1').show();
 				$('.form #text2').show();
 				$('.form #text3').hide();
 				$('.form #text4').hide();
+				$('.form #barcode1').hide();
+				$('.form #barcode2').hide();
 			break;
 			case "tmp3":
 				$('.form #text1').show();
 				$('.form #text2').hide();
 				$('.form #text3').hide();
 				$('.form #text4').hide();
+				$('.form #barcode1').hide();
+				$('.form #barcode2').hide();
 			break;
 			case "tmp4":
 				$('.form #text1').show();
 				$('.form #text2').show();
 				$('.form #text3').show();
 				$('.form #text4').show();
+				$('.form #barcode1').hide();
+				$('.form #barcode2').hide();
+			break;
+			case "tmp5":
+				$('.form #text1').hide();
+				$('.form #text2').hide();
+				$('.form #text3').hide();
+				$('.form #text4').hide();
+				$('.form #barcode1').show();
+				$('.form #barcode2').hide();
+			break;
+			case "tmp6":
+				$('.form #text1').show();
+				$('.form #text2').hide();
+				$('.form #text3').hide();
+				$('.form #text4').hide();
+				$('.form #barcode1').hide();
+				$('.form #barcode2').show();
 			break;
 		} 
 	});

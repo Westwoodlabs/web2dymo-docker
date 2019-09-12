@@ -1,5 +1,7 @@
 <?php
 
+include "libs/autoload.php";
+
 $config['max_copies'] = 10;
 $config['tmpdir'] = dirname(__FILE__)."/tmp/";
 $config['tmpdelete'] = 60 * 60 * 24 * 2; // 2 days
@@ -55,14 +57,20 @@ if(isset($_GET['download'])) {
 	$form_text2 = trim($_POST['text2']);
 	$form_text3 = trim($_POST['text3']);
 	$form_text4 = trim($_POST['text4']);
+	$form_barcode1 = trim($_POST['barcode1']);
+	$form_barcode2 = trim($_POST['barcode2']);
 	$form_copies = intval($_POST['copies']);
 	$form_template = trim($_POST['template']);
 	$form_logo = ($_POST['logo'] == "yes" ? true : false);
 	
-	if($form_text == "") {
+	if($form_text == "" && $form_barcode1 == "") {
 		$errormsg = "Text fehlt!";
-	} elseif(strlen($form_text) >= 25 || strlen($form_text2) >= 25 || strlen($form_text3) >= 25 || strlen($form_text4) >= 25) {
+	} elseif(strlen($form_text) > 25 || strlen($form_text2) > 25 || strlen($form_text3) > 25 || strlen($form_text4) > 25) {
 		$errormsg = "Text zu lang!";
+	} elseif(strlen($form_barcode1) > 15) {
+		$errormsg = "Text für Barcode zu lang! Max. 10 Zeichen.";
+	} elseif(strlen($form_barcode2) > 13) {
+		$errormsg = "Text für Barcode lang! EAN hat 13 Zeichen.";
 	} elseif($form_copies <= 0 || $form_copies > $config['max_copies']) {
 		$errormsg = "Zu viele oder wenig Exemplare. Maximal 10!";
 	} elseif($form_template == "") {
@@ -129,6 +137,39 @@ if(isset($_GET['download'])) {
 					}
 				}
 			break;
+			case "tmp5":
+			$generator = new \Picqer\Barcode\BarcodeGeneratorPNG();
+			$barcode = $generator->getBarcode(iconv('UTF-8', 'windows-1252', $form_barcode1), $generator::TYPE_CODE_128, 6);
+			$barcodefile = $config['tmpdir'].tempfile('web2dymo', 'png', $config['tmpdir']);
+			file_put_contents($barcodefile, $barcode);
+			$pdf = new FPDF('L','mm',array(88,36));
+			for($i=1;$i<=$form_copies;$i++) {
+				$pdf->addPage('L');
+				$pdf->SetFont('Arial','B',14);
+				$pdf->Image($barcodefile, 5, 5, 78, 18);
+				$pdf->Text(5, 30, iconv('UTF-8', 'windows-1252', $form_barcode1));
+				if($form_logo) {
+					$pdf->Image("assets/wwlabs-150x150.png", 75, 25, 8, 8);
+				}
+			}
+			break;
+			case "tmp6":
+			$generator = new \Picqer\Barcode\BarcodeGeneratorPNG();
+			$barcode = $generator->getBarcode(iconv('UTF-8', 'windows-1252', $form_barcode2), $generator::TYPE_EAN_13, 4);
+			$barcodefile = $config['tmpdir'].tempfile('web2dymo', 'png', $config['tmpdir']);
+			file_put_contents($barcodefile, $barcode);
+			$pdf = new FPDF('L','mm',array(88,36));
+			for($i=1;$i<=$form_copies;$i++) {
+				$pdf->addPage('L');
+				$pdf->SetFont('Arial','B',16);
+				$pdf->Text(5, 10, iconv('UTF-8', 'windows-1252', $form_text));
+				$pdf->Image($barcodefile, 5, 13, 50, 12);
+				$pdf->SetFont('Arial','B',12);
+				$pdf->Text(5, 30, iconv('UTF-8', 'windows-1252', "EAN: ".$form_barcode2));
+				if($form_logo) {
+					$pdf->Image("assets/wwlabs-150x150.png", 70, 18, 15, 15);
+				}
+			}
 		}
 		
 		switch($form_action) {
@@ -207,6 +248,8 @@ if(isset($_GET['download'])) {
 										<option value="tmp2">Freitext (54x25mm, zwei Zeilen)</option>
 										<option value="tmp3">Dauerleihgabe (88x36mm)</option>
 										<option value="tmp4">Freitext (88x36mm, vier Zeilen)</option>
+										<option value="tmp5">Barcode (88x36, CODE 128)</option>
+										<option value="tmp6">Barcode (88x36, EAN-13)</option>
 									</select>
 								</div>
 								<div class="form-group" id="text1">
@@ -224,6 +267,14 @@ if(isset($_GET['download'])) {
 								<div class="form-group hidden" id="text4">
 									<label for="name">Text 4</label>
 									<input type="text" class="form-control" name="text4" placeholder="Texteingabe">
+								</div>
+								<div class="form-group hidden" id="barcode1">
+									<label for="name">Barcode</label>
+									<input type="text" class="form-control" name="barcode1" placeholder="Texteingabe">
+								</div>
+								<div class="form-group hidden" id="barcode2">
+									<label for="name">EAN</label>
+									<input type="text" class="form-control" name="barcode2" placeholder="Texteingabe">
 								</div>
 								<div class="form-group">
 									<label for="copies">Copies</label>
