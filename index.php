@@ -55,7 +55,7 @@ if(isset($_GET['download'])) {
 	
 		$temp_file = tempnam(sys_get_temp_dir(), 'web2dymo').".pdf";
 		
-		require('fpdf/fpdf.php');
+		require('libs/fpdf/fpdf.php');
 
 		switch($form_template) {
 			default: //tmp1
