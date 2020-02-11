@@ -5,6 +5,7 @@ include "libs/autoload.php";
 $config['max_copies'] = 10;
 $config['tmpdir'] = dirname(__FILE__)."/tmp/";
 $config['tmpdelete'] = 60 * 60 * 24 * 2; // 2 days
+$config['printermodels'] = array("dymo320"=>"Dymo LabelWriter 320", "dymo450"=>"Dymo LabelWriter 450");
 
 
 // Check writable
@@ -88,6 +89,7 @@ if(isset($_GET['download'])) {
 
 		switch($form_template) {
 			default: //tmp1
+				$printermodel = "dymo320";
 				$pdf = new FPDF('L','mm',array(54,25));
 				for($i=1;$i<=$form_copies;$i++) {
 					$pdf->addPage('L');
@@ -100,6 +102,7 @@ if(isset($_GET['download'])) {
 				}
 			break;
 			case "tmp2":
+				$printermodel = "dymo320";
 				$pdf = new FPDF('L','mm',array(54,25));
 				for($i=1;$i<=$form_copies;$i++) {
 					$pdf->addPage('L');
@@ -112,6 +115,7 @@ if(isset($_GET['download'])) {
 				}
 			break;
 			case "tmp3":
+				$printermodel = "dymo450";
 				$pdf = new FPDF('L','mm',array(88,36));
 				for($i=1;$i<=$form_copies;$i++) {
 					$pdf->addPage('L');
@@ -124,6 +128,7 @@ if(isset($_GET['download'])) {
 				}
 			break;
 			case "tmp4":
+				$printermodel = "dymo450";
 				$pdf = new FPDF('L','mm',array(88,36));
 				for($i=1;$i<=$form_copies;$i++) {
 					$pdf->addPage('L');
@@ -142,6 +147,7 @@ if(isset($_GET['download'])) {
 			$barcode = $generator->getBarcode(iconv('UTF-8', 'windows-1252', $form_barcode1), $generator::TYPE_CODE_128, 6);
 			$barcodefile = $config['tmpdir'].tempfile('web2dymo', 'png', $config['tmpdir']);
 			file_put_contents($barcodefile, $barcode);
+			$printermodel = "dymo450";
 			$pdf = new FPDF('L','mm',array(88,36));
 			for($i=1;$i<=$form_copies;$i++) {
 				$pdf->addPage('L');
@@ -154,6 +160,7 @@ if(isset($_GET['download'])) {
 			}
 			break;
 			case "tmp6":
+			$printermodel = "dymo450";
 			$generator = new \Picqer\Barcode\BarcodeGeneratorPNG();
 			$barcode = $generator->getBarcode(iconv('UTF-8', 'windows-1252', $form_barcode2), $generator::TYPE_EAN_13, 4);
 			$barcodefile = $config['tmpdir'].tempfile('web2dymo', 'png', $config['tmpdir']);
@@ -203,13 +210,20 @@ if(isset($_GET['download'])) {
 			break;
 			
 			case "print":
-				$pdf->Output('F', $temp_file);
+
+				if($config['printermodels'][$printermodel] != "") {
+					$pdf->Output('F', $temp_file);
 				
-				$exec = "lp -d dymo ".$temp_file;
-				exec($exec);
+					$exec = "lp -d ".$printermodel." ".$temp_file;
+					exec($exec);
 					
-				echo json_encode(array('okay'=>true, 'html'=>'Dokument wurde gedruckt!', 'debug'=>$exec));
-			break;
+					echo json_encode(array('okay'=>true, 'html'=>'Dokument wurde auf '.$config['printermodels'][$printermodel].' gedruckt!', 'debug'=>$exec));
+			
+				} else {
+					echo json_encode(array('okay'=>true, 'html'=>'Fehler im Template. Drucker nicht gefunden!', 'debug'=>$exec));
+			
+				}
+				break;
 		}
 
 
@@ -244,12 +258,12 @@ if(isset($_GET['download'])) {
 								<div class="form-group">
 									<label for="template">Template</label>
 									<select class="form-control" name="template">
-										<option value="tmp1">Dauerleihgabe (54x25mm)</option>
-										<option value="tmp2">Freitext (54x25mm, zwei Zeilen)</option>
-										<option value="tmp3">Dauerleihgabe (88x36mm)</option>
-										<option value="tmp4">Freitext (88x36mm, vier Zeilen)</option>
-										<option value="tmp5">Barcode (88x36, CODE 128)</option>
-										<option value="tmp6">Barcode (88x36, EAN-13)</option>
+										<option value="tmp1">Dauerleihgabe (54x25mm [11352])</option>
+										<option value="tmp2">Freitext (54x25mm [11352], zwei Zeilen)</option>
+										<option value="tmp3">Dauerleihgabe (88x36mm [99012])</option>
+										<option value="tmp4">Freitext (88x36mm [99012], vier Zeilen)</option>
+										<option value="tmp5">Barcode (88x36 [99012], CODE 128)</option>
+										<option value="tmp6">Barcode (88x36 [99012], EAN-13)</option>
 									</select>
 								</div>
 								<div class="form-group" id="text1">
@@ -302,9 +316,10 @@ if(isset($_GET['download'])) {
 				</div>
 				<div class="col-sm">
 					<div class="card">
-						<h5 class="card-header">Preview</h5>
+						<h5 class="card-header">Output</h5>
 						<div class="card-body">
-							<div id="preview"></div>
+							<div id="loader" style="display:none"><svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" width="24px" height="24px" viewBox="0 0 128 128" xml:space="preserve"><rect x="0" y="0" width="100%" height="100%" fill="#FFFFFF" /><path fill="#000000" fill-opacity="1" d="M64.4 16a49 49 0 0 0-50 48 51 51 0 0 0 50 52.2 53 53 0 0 0 54-52c-.7-48-45-55.7-45-55.7s45.3 3.8 49 55.6c.8 32-24.8 59.5-58 60.2-33 .8-61.4-25.7-62-60C1.3 29.8 28.8.6 64.3 0c0 0 8.5 0 8.7 8.4 0 8-8.6 7.6-8.6 7.6z"><animateTransform attributeName="transform" type="rotate" from="0 64 64" to="360 64 64" dur="1800ms" repeatCount="indefinite"></animateTransform></path></svg></div>
+							<div id="preview"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-terminal"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg></div>
 						</div>
 					</div>
 				</div>

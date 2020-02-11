@@ -56,7 +56,8 @@ $( document ).ready(function() {
 	
 	$('.form button').click(function(){
 		
-		$("#preview").addClass("loader");
+		$("#loader").show();
+		$("#preview").hide();
 		$("#preview").removeClass("error");
 		var action = $(this).attr('name');
 		var data = $('.form').serialize() + "&action=" + action;
@@ -84,7 +85,8 @@ $( document ).ready(function() {
 			$("#preview").html("Server Error. Something went wrong!").addClass("error");
 		})
 		.always(function( data ) {
-			$("#preview").removeClass("loader");
+			$("#preview").show()
+			$("#loader").hide();
 			$(".form button").prop("disabled",false);
 		});
 		
