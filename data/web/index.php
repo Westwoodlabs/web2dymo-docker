@@ -3,7 +3,7 @@
 include "libs/autoload.php";
 
 $config['max_copies'] = 10;
-$config['tmpdir'] = dirname(__FILE__)."/tmp/";
+$config['tmpdir'] = sys_get_temp_dir()."/";
 $config['tmpdelete'] = 60 * 60 * 24 * 2; // 2 days
 $config['printermodels'] = array("dymo320"=>"Dymo LabelWriter 320", "dymo450"=>"Dymo LabelWriter 450");
 
@@ -217,10 +217,10 @@ if(isset($_GET['download'])) {
 					$exec = "lp -d ".$printermodel." ".$temp_file;
 					exec($exec);
 					
-					echo json_encode(array('okay'=>true, 'html'=>'Dokument wurde auf '.$config['printermodels'][$printermodel].' gedruckt!', 'debug'=>$exec));
+					echo json_encode(array('okay'=>true, 'html'=>'Label will be printed shortly on <b>'.$config['printermodels'][$printermodel].'</b>!<br />Please wait a moment...', 'debug'=>$exec));
 			
 				} else {
-					echo json_encode(array('okay'=>true, 'html'=>'Fehler im Template. Drucker nicht gefunden!', 'debug'=>$exec));
+					echo json_encode(array('okay'=>true, 'html'=>'Error im template file. Printer not found!', 'debug'=>$exec));
 			
 				}
 				break;
@@ -239,13 +239,14 @@ if(isset($_GET['download'])) {
 	<html lang="de">
 	<head>
 		<meta charset="utf-8"/>
-		<title>Web2Dymo</title>
+		<title>Web2Dymo - Dymo Label Printer Webinterface</title>
 		<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 	<link href="assets/style.css" rel="stylesheet">
+	<link rel="shortcut icon" href="assets/favicon.ico">
 	</head>
 	<body>
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-			<a class="navbar-brand" href="#">Web2Dymo</a>
+			<a class="navbar-brand" href="#">Web2Dymo - Dymo Label Printer Webinterface</a>
 		</nav>
 	<div id="main">
 		<div class="container">
@@ -268,27 +269,27 @@ if(isset($_GET['download'])) {
 								</div>
 								<div class="form-group" id="text1">
 									<label for="name">Text</label>
-									<input type="text" class="form-control" name="text" placeholder="Texteingabe">
+									<input type="text" class="form-control" name="text" placeholder="Textinput">
 								</div>
 								<div class="form-group hidden" id="text2">
 									<label for="name">Text 2</label>
-									<input type="text" class="form-control" name="text2" placeholder="Texteingabe">
+									<input type="text" class="form-control" name="text2" placeholder="Textinput">
 								</div>
 								<div class="form-group hidden" id="text3">
 									<label for="name">Text 3</label>
-									<input type="text" class="form-control" name="text3" placeholder="Texteingabe">
+									<input type="text" class="form-control" name="text3" placeholder="Textinput">
 								</div>
 								<div class="form-group hidden" id="text4">
 									<label for="name">Text 4</label>
-									<input type="text" class="form-control" name="text4" placeholder="Texteingabe">
+									<input type="text" class="form-control" name="text4" placeholder="Textinput">
 								</div>
 								<div class="form-group hidden" id="barcode1">
 									<label for="name">Barcode</label>
-									<input type="text" class="form-control" name="barcode1" placeholder="Texteingabe">
+									<input type="text" class="form-control" name="barcode1" placeholder="Textinput">
 								</div>
 								<div class="form-group hidden" id="barcode2">
 									<label for="name">EAN</label>
-									<input type="text" class="form-control" name="barcode2" placeholder="Texteingabe">
+									<input type="text" class="form-control" name="barcode2" placeholder="Textinput">
 								</div>
 								<div class="form-group">
 									<label for="copies">Copies</label>
@@ -305,7 +306,7 @@ if(isset($_GET['download'])) {
 										<option value="no">No</option>
 									</select>
 								</div>
-								<div class="form-group">
+								<div class="form-group" style="margin-bottom:0">
 									<button type="button" class="btn btn-primary" name="print">Print</print> 
 									<button type="button" class="btn btn-primary" name="preview">Preview</print>
 									<button type="button" class="btn btn-primary" name="download">Download</print>
@@ -326,6 +327,11 @@ if(isset($_GET['download'])) {
 			</div>
 		</div>
 	</div>
+	<footer class="footer">
+      <div class="container text-center">
+       <span class="text-muted">&copy; 2020 Fab!an for <a href="//westwoodlabs.de">Westwoodlabs e.V.</a></span>
+      </div>
+    </footer>
 	<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 	<script src="assets/script.js"></script>
 	</body>
