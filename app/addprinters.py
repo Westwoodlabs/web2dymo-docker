@@ -49,5 +49,6 @@ while True:
     ))
 
 print("{}/{} enabled Printers.".format(enabledPrinterCount, totalPrinterCount))
+time.sleep(3) # Sleep for 3 seconds
 if enabledPrinterCount == 0:
   exit(0)
