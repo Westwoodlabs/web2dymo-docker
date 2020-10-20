@@ -63,6 +63,7 @@ if(isset($_GET['download'])) {
 	$form_copies = intval($_POST['copies']);
 	$form_template = trim($_POST['template']);
 	$form_logo = ($_POST['logo'] == "yes" ? true : false);
+	$form_tab = trim($_POST['tab']);
 	
 	if($form_text == "" && $form_barcode1 == "") {
 		$errormsg = "Text fehlt!";
@@ -81,7 +82,6 @@ if(isset($_GET['download'])) {
 	}
 	
 	if($errormsg == "") {
-
 	
 		$temp_file = $config['tmpdir'].tempfile('web2dymo', 'pdf', $config['tmpdir']);
 		
@@ -240,7 +240,7 @@ if(isset($_GET['download'])) {
 	<head>
 		<meta charset="utf-8"/>
 		<title>Web2Dymo - Dymo Label Printer Webinterface</title>
-		<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
 		<link href="assets/style.css" rel="stylesheet">
 		<link rel="shortcut icon" href="assets/favicon.ico">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -254,70 +254,103 @@ if(isset($_GET['download'])) {
 			<div class="row">
 				<div class="col-sm">
 					<div class="card">
-						<h5 class="card-header">Input</h5>
+						<div class="card-header">
+							<ul class="nav nav-tabs card-header-tabs" id="myTab" role="tablist">
+								<li class="nav-item" role="presentation">
+									<a class="nav-link active" id="text-tab" data-toggle="tab" href="#text" role="tab" aria-controls="test" aria-selected="true">Text input</a>
+								</li>
+								<li class="nav-item" role="presentation">
+									<a class="nav-link" id="upload-tab" data-toggle="tab" href="#upload" role="tab" aria-controls="upload" aria-selected="false">Upload</a>
+								</li>
+							</ul>
+						</div>
 						<div class="card-body">
 							<form class="form">
-								<div class="form-group">
-									<label for="template">Template</label>
-									<select class="form-control" name="template">
-										<option value="tmp1">Dauerleihgabe (54x25mm [11352])</option>
-										<option value="tmp2">Freitext (54x25mm [11352], zwei Zeilen)</option>
-										<option value="tmp3">Dauerleihgabe (88x36mm [99012])</option>
-										<option value="tmp4">Freitext (88x36mm [99012], vier Zeilen)</option>
-										<option value="tmp5">Barcode (88x36 [99012], CODE 128)</option>
-										<option value="tmp6">Barcode (88x36 [99012], EAN-13)</option>
-									</select>
-								</div>
-								<div class="form-group" id="text1">
-									<label for="name">Text</label>
-									<input type="text" class="form-control" name="text" placeholder="Textinput">
-								</div>
-								<div class="form-group hidden" id="text2">
-									<label for="name">Text 2</label>
-									<input type="text" class="form-control" name="text2" placeholder="Textinput">
-								</div>
-								<div class="form-group hidden" id="text3">
-									<label for="name">Text 3</label>
-									<input type="text" class="form-control" name="text3" placeholder="Textinput">
-								</div>
-								<div class="form-group hidden" id="text4">
-									<label for="name">Text 4</label>
-									<input type="text" class="form-control" name="text4" placeholder="Textinput">
-								</div>
-								<div class="form-group hidden" id="barcode1">
-									<label for="name">Barcode</label>
-									<input type="text" class="form-control" name="barcode1" placeholder="Textinput">
-								</div>
-								<div class="form-group hidden" id="barcode2">
-									<label for="name">EAN</label>
-									<input type="text" class="form-control" name="barcode2" placeholder="Textinput">
-								</div>
-								<div class="form-group">
-									<label for="copies">Copies</label>
-									<select class="form-control" name="copies">';
-										for($i=1;$i<=$config['max_copies'];$i++) {
-											echo '<option value="'.$i.'">'.$i.'</option>';
-										}
-									echo '</select>
-								</div>
-								<div class="form-group">
-									<label for="logo">Logo</label>
-									<select class="form-control" name="logo">
-										<option value="yes">Yes</option>
-										<option value="no">No</option>
-									</select>
-								</div>
-								<div class="form-group" style="margin-bottom:0">
-									<button type="button" class="btn btn-primary" name="print">Print</print> 
-									<button type="button" class="btn btn-primary" name="preview">Preview</print>
-									<button type="button" class="btn btn-primary" name="download">Download</print>
+								<div class="tab-content">
+									<div class="tab-pane active" id="text" role="tabpanel" aria-labelledby="text-tab">
+										<div class="form-group">
+											<label for="template">Template</label>
+											<select class="form-control" name="template">
+												<option value="tmp1">Dauerleihgabe (54x25mm [11352])</option>
+												<option value="tmp2">Freitext (54x25mm [11352], zwei Zeilen)</option>
+												<option value="tmp3">Dauerleihgabe (88x36mm [99012])</option>
+												<option value="tmp4">Freitext (88x36mm [99012], vier Zeilen)</option>
+												<option value="tmp5">Barcode (88x36 [99012], CODE 128)</option>
+												<option value="tmp6">Barcode (88x36 [99012], EAN-13)</option>
+											</select>
+										</div>
+										<div class="form-group" id="text1">
+											<label for="name">Text</label>
+											<input type="text" class="form-control" name="text" placeholder="Textinput">
+										</div>
+										<div class="form-group hidden" id="text2">
+											<label for="name">Text 2</label>
+											<input type="text" class="form-control" name="text2" placeholder="Textinput">
+										</div>
+										<div class="form-group hidden" id="text3">
+											<label for="name">Text 3</label>
+											<input type="text" class="form-control" name="text3" placeholder="Textinput">
+										</div>
+										<div class="form-group hidden" id="text4">
+											<label for="name">Text 4</label>
+											<input type="text" class="form-control" name="text4" placeholder="Textinput">
+										</div>
+										<div class="form-group hidden" id="barcode1">
+											<label for="name">Barcode</label>
+											<input type="text" class="form-control" name="barcode1" placeholder="Textinput">
+										</div>
+										<div class="form-group hidden" id="barcode2">
+											<label for="name">EAN</label>
+											<input type="text" class="form-control" name="barcode2" placeholder="Textinput">
+										</div>
+										<div class="form-group">
+											<label for="copies">Copies</label>
+											<select class="form-control" name="copies">';
+												for($i=1;$i<=$config['max_copies'];$i++) {
+													echo '<option value="'.$i.'">'.$i.'</option>';
+												}
+											echo '</select>
+										</div>
+										<div class="form-group">
+											<label for="logo">Logo</label>
+											<select class="form-control" name="logo">
+												<option value="yes">Yes</option>
+												<option value="no">No</option>
+											</select>
+										</div>
+										<div class="form-group" style="margin-bottom:0">
+											<button type="button" class="btn btn-primary" name="print">Print</print> 
+											<button type="button" class="btn btn-primary" name="preview">Preview</print>
+											<button type="button" class="btn btn-primary" name="download">Download</print>
+										</div>
+									</div>
+									<div class="tab-pane" id="upload" role="tabpanel" aria-labelledby="upload-tab">
+										<div class="form-group">
+											<label for="file">Choose a file</label>
+											<input type="file" name="file" id="file" class="form-control"/>
+										</div>
+										<div class="form-group">
+											<label for="template">Printer</label>
+											<select class="form-control" name="template">';
+
+											foreach ($config['printermodels'] as $model => $name) {
+												echo '<option value="'.$name.'">'.$name.'</option>';
+											}
+
+											echo '</select>
+										</div>
+										<div class="form-group" style="margin-bottom:0">
+											<button type="button" class="btn btn-primary" name="print">Print</print> 
+											<button type="button" class="btn btn-primary" name="preview">Preview</print>
+										</div>
+									</div>
 								</div>
 							</form>
 						</div>
 					</div>
 				</div>
 				<div class="col-sm">
-					<div class="card">
+					<div class="card mb-3">
 						<h5 class="card-header">Output</h5>
 						<div class="card-body">
 							<div id="loader" style="display:none"><svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" width="24px" height="24px" viewBox="0 0 128 128" xml:space="preserve"><rect x="0" y="0" width="100%" height="100%" fill="#FFFFFF" /><path fill="#000000" fill-opacity="1" d="M64.4 16a49 49 0 0 0-50 48 51 51 0 0 0 50 52.2 53 53 0 0 0 54-52c-.7-48-45-55.7-45-55.7s45.3 3.8 49 55.6c.8 32-24.8 59.5-58 60.2-33 .8-61.4-25.7-62-60C1.3 29.8 28.8.6 64.3 0c0 0 8.5 0 8.7 8.4 0 8-8.6 7.6-8.6 7.6z"><animateTransform attributeName="transform" type="rotate" from="0 64 64" to="360 64 64" dur="1800ms" repeatCount="indefinite"></animateTransform></path></svg></div>
@@ -334,6 +367,7 @@ if(isset($_GET['download'])) {
       </div>
     </footer>
 	<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
 	<script src="assets/script.js"></script>
 	</body>
 </html>';
