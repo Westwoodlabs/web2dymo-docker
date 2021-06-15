@@ -1,5 +1,43 @@
+var templates = {};
+
 $(document).ready(function () {
 	//console.log( "ready!" );
+
+	$.ajax({ url: "index.php?ajax", data: "action=template", method: "POST", dataType: "json" }).done(function (data) {
+		console.log(data.sizes);
+
+		if (data.sizes) {
+
+			$('#size').prop("disabled", false)
+			$('#size option').remove()
+
+			$.each(data.sizes, function (val, text) {
+				$('#size').append(`<option value="${val}">${text}</option>`);
+			});
+
+		}
+
+		templates = data.templates;
+
+	});
+
+	$('.form [name="size"]').change(function (data) {
+
+
+		list = templates[$(this).val()];
+		console.log("selected: ", data);
+		console.log("selected: ", list);
+
+		if (list) {
+			$('#template').prop("disabled", false)
+			$('#template option').remove()
+			$.each(list, function (val, text) {
+				$('#template').append(`<option value="${val}">${text.name}</option>`);
+			});
+		}
+
+
+	});
 
 	$('.form [name="template"]').change(function () {
 
