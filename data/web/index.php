@@ -5,7 +5,7 @@ include "libs/autoload.php";
 $config['max_copies'] = 10;
 $config['tmpdir'] = sys_get_temp_dir()."/";
 $config['tmpdelete'] = 60 * 60 * 24 * 2; // 2 days
-$config['printermodels'] = array("dymo320"=>"Dymo LabelWriter 320", "dymo450"=>"Dymo LabelWriter 450");
+$config['printermodels'] = array("dymo320"=>"Dymo LabelWriter 320", "dymo450"=>"Dymo LabelWriter 450", "zebra2844"=>"Zebra TLP 2844");
 
 
 // Check writable
@@ -159,24 +159,21 @@ if(isset($_GET['download'])) {
 				}
 			}
 			break;
-			case "tmp6":
-			$printermodel = "dymo450";
+			case "tmp7":
+			$printermodel = "zebra2844";
 			$generator = new \Picqer\Barcode\BarcodeGeneratorPNG();
-			$barcode = $generator->getBarcode(iconv('UTF-8', 'windows-1252', $form_barcode2), $generator::TYPE_EAN_13, 4);
-			$barcodefile = $config['tmpdir'].tempfile('web2dymo', 'png', $config['tmpdir']);
-			file_put_contents($barcodefile, $barcode);
-			$pdf = new FPDF('L','mm',array(88,36));
-			for($i=1;$i<=$form_copies;$i++) {
-				$pdf->addPage('L');
-				$pdf->SetFont('Arial','B',16);
-				$pdf->Text(5, 10, iconv('UTF-8', 'windows-1252', $form_text));
-				$pdf->Image($barcodefile, 5, 13, 50, 12);
-				$pdf->SetFont('Arial','B',12);
-				$pdf->Text(5, 30, iconv('UTF-8', 'windows-1252', "EAN: ".$form_barcode2));
-				if($form_logo) {
-					$pdf->Image("assets/wwlabs-150x150.png", 70, 18, 15, 15);
+			$pdf = new FPDF('L','mm',array(103,199));
+				for($i=1;$i<=$form_copies;$i++) {
+					$pdf->addPage('L');
+					$pdf->SetFont('Arial','B',60);
+					$pdf->Text(10, 30, iconv('UTF-8', 'windows-1252', $form_text));
+					$pdf->Text(10, 50, iconv('UTF-8', 'windows-1252', $form_text2));
+					$pdf->Text(10, 70, iconv('UTF-8', 'windows-1252', $form_text3));
+					$pdf->Text(10, 90, iconv('UTF-8', 'windows-1252', $form_text4));
+					if($form_logo) {
+						$pdf->Image("assets/wwlabs-150x150.png", 160, 10, 30, 30);
+					}
 				}
-			}
 		}
 		
 		switch($form_action) {
@@ -266,6 +263,7 @@ if(isset($_GET['download'])) {
 										<option value="tmp4">Freitext (88x36mm [99012], vier Zeilen)</option>
 										<option value="tmp5">Barcode (88x36 [99012], CODE 128)</option>
 										<option value="tmp6">Barcode (88x36 [99012], EAN-13)</option>
+										<option value="tmp7">Freitext (103x199, vier Zeilen)</option>
 									</select>
 								</div>
 								<div class="form-group" id="text1">

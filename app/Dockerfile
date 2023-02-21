@@ -17,12 +17,15 @@ RUN ln -sf /proc/self/fd/1 /var/log/apache2/access.log && \
 RUN sed -i 's/<policy domain="coder" rights="none" pattern="PDF" \/>/<policy domain="coder" rights="read|write" pattern="PDF" \/>/g' /etc/ImageMagick-6/policy.xml
 
 
-# Download and install the printer definition
+# Download and install Dymo printer definition
 WORKDIR /tmp
 RUN wget http://download.dymo.com/dymo/Software/Download%20Drivers/Linux/Download/dymo-cups-drivers-1.4.0.tar.gz && \
     tar -xzf dymo-cups-drivers-1.4.0.tar.gz && \
     mkdir -p /usr/share/cups/model && \
     cp ./dymo-cups-drivers-1.4.0.5/ppd/*.ppd /usr/share/cups/model
+
+# Copy Zebra printer driver definition
+COPY ./zebraep2.ppd /usr/share/cups/model/zebraep2.ppd
 
 # add printers
 #COPY addprinters.sh addprinters.sh
