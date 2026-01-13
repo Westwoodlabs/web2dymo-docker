@@ -1,5 +1,8 @@
-# web2dymo-docker - Dymo Label Printer Webinterface for Docker
-Docker Image with PHP and CUPS for printing on Dymo Labelprinters connected to a network print server.
+# Web2Dymo-docker - Dockerized Dymo Label Printer Webinterface
+
+Web2Dymo is a simple webinterface to print labels on Dymo Label Printers. This docker image uses PHP and CUPS to print on a network print server.
+
+![Screenshot](.github/screenshot.png)
 
 ## Usage
 
@@ -13,9 +16,9 @@ services:
     build:
       context: ./app
     restart: unless-stopped
-    volumes: 
+    volumes:
       - "./data/web:/var/www/html"
-    ports: 
+    ports:
       - 80:80
     environment:
       PRINTER1_ENABLE: 1
@@ -27,4 +30,3 @@ services:
       PRINTER2_DEVURI: socket://url.to.print.server:9101
       PRINTER2_PPDFILE: /usr/share/cups/model/lw320.ppd
 ```
-
