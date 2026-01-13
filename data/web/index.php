@@ -345,7 +345,7 @@ if(isset($_GET['download'])) {
 	</div>
 	<footer class="footer">
       <div class="container text-center">
-       <span class="text-muted">&copy; 2020 Fab!an for <a href="//westwoodlabs.de">Westwoodlabs e.V.</a></span>
+       <span class="text-muted">&copy; 2020 - '.date("Y").' <a href="https://chaos.social/@foorschtbar">Fab!an</a> for <a href="//westwoodlabs.de">Westwoodlabs e.V.</a> | <a href="https://github.com/Westwoodlabs/web2dymo-docker">GitHub</a></span>
       </div>
     </footer>
 	<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
